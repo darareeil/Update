@@ -663,20 +663,12 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(-45deg, #0a0604, #2a1b12, #4a2f1d, #1a0f0a);
-            background-size: 400% 400%;
-            animation: welcomeGradientBG 15s ease infinite;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 10000;
             transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             font-family: "Times New Roman", Times, serif;
-        }
-
-        @keyframes welcomeGradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         #welcome-screen.hidden {
@@ -686,13 +678,8 @@
         }
 
         .welcome-card {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
             padding: 48px 40px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -700,12 +687,6 @@
             gap: 28px;
             width: 90%;
             max-width: 420px;
-            animation: welcomeFloatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes welcomeFloatUp {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
         }
 
         .welcome-title {
@@ -766,6 +747,1579 @@
 
         #usernameInput:hover:not(:focus) {
             background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        #usernameInput:focus {
+            border-color: #d9a24b;
+            box-shadow: 0 0 0 4px rgba(217, 162, 75, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        #usernameInput:focus + .welcome-input-icon {
+            color: #d9a24b;
+        }
+
+        #startBtn {
+            background: linear-gradient(145deg, #d9a24b, #b3792f);
+            color: #241a10;
+            border: none;
+            border-radius: 30px;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(217, 162, 75, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #startBtn:disabled {
+            background: #3a2b22;
+            color: #7a6a5f;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: scale(1);
+        }
+
+        #startBtn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(217, 162, 75, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        #startBtn:not(:disabled):active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 12px rgba(217, 162, 75, 0.2);
+        }
+
+        .btn-loading-text {
+            animation: pulse-load 1s infinite;
+        }
+
+        @keyframes pulse-load {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Multiplayer Lobby Additions */
+        .lobby-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(-45deg, #0a0604, #2a1b12, #4a2f1d, #1a0f0a);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .lobby-screen.open {
+            display: flex;
+        }
+
+        .lobby-btn {
+            background: linear-gradient(145deg, #d9a24b, #b3792f);
+            color: #241a10;
+            border: none;
+            border-radius: 30px;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(217, 162, 75, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            font-family: inherit;
+        }
+
+        .lobby-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(217, 162, 75, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .lobby-btn:active {
+            transform: translateY(1px);
+        }
+
+        .lobby-btn.secondary {
+            background: linear-gradient(145deg, #4a3831, #2e211d);
+            color: #f2e9df;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+        .room-id-display {
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: 8px;
+            background: linear-gradient(to right, #ffd700, #ffaa00, #ffea8c, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 4px 0;
+        }
+
+        /* Join Game Redesign */
+        .join-input-group {
+            width: 100%;
+        }
+
+        .join-room-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(217, 162, 75, 0.35);
+            border-radius: 16px;
+            padding: 18px 20px;
+            font-size: 1.4rem;
+            letter-spacing: 6px;
+            text-align: center;
+            color: #f2e9df;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            font-family: inherit;
+        }
+
+        .join-room-input::placeholder {
+            color: #8a7d72;
+            letter-spacing: 4px;
+        }
+
+        .join-room-input:hover:not(:focus) {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(217, 162, 75, 0.5);
+        }
+
+        .join-room-input:focus {
+            border-color: #d9a24b;
+            box-shadow: 0 0 0 4px rgba(217, 162, 75, 0.18), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .join-submit-btn {
+            background: linear-gradient(145deg, #d9a24b, #b3792f);
+            color: #241a10;
+            border: none;
+            border-radius: 30px;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(217, 162, 75, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            font-family: inherit;
+        }
+
+        .join-submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(217, 162, 75, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .join-submit-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 12px rgba(217, 162, 75, 0.2);
+        }
+
+        /* Chat unread badge */
+        .fab-chat {
+            position: relative;
+        }
+
+        .chat-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            border-radius: 10px;
+            background: #d32f2f;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 2px #1e1512;
+            animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .chat-badge.show {
+            display: flex;
+        }
+
+        @keyframes badge-pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .fab:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Board flip for joining player */
+        #board-container.flipped {
+            transform: rotate(180deg);
+        }
+
+        #board-container.flipped .piece {
+            transform: rotate(180deg);
+        }
+
+        /* Toast notifications */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: linear-gradient(145deg, #3a2518, #2a1b12);
+            color: #f2e9df;
+            padding: 12px 22px;
+            border-radius: 30px;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255,255,255,0.08);
+            font-size: 0.95rem;
+            font-family: "Times New Roman", Times, serif;
+            opacity: 0;
+            transform: translateY(-12px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            border: 1px solid rgba(217, 162, 75, 0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Draw incoming modal */
+        #draw-incoming-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        #draw-incoming-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #draw-incoming-modal .draw-dialog {
+            border: 1px solid rgba(217, 162, 75, 0.35);
+        }
+
+        /* Rematch incoming modal */
+        #rematch-incoming-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        #rematch-incoming-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #rematch-incoming-modal .draw-dialog {
+            border: 1px solid rgba(217, 162, 75, 0.35);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen">
+        <div class="welcome-card">
+            <h1 class="welcome-title">DAMA KING</h1>
+            <p class="welcome-subtitle">DUEL</p>
+            <div class="welcome-input-group">
+                <input type="text" id="usernameInput" placeholder="Enter your username" autocomplete="off" spellcheck="false" />
+                <span class="welcome-input-icon">👤</span>
+            </div>
+            <button id="startBtn" disabled>Start Game</button>
+        </div>
+    </div>
+
+    <!-- Multiplayer Menu -->
+    <div id="multiplayer-menu" class="lobby-screen">
+        <div class="welcome-card">
+            <h1 class="welcome-title">DAMA KING</h1>
+            <p class="welcome-subtitle">MULTIPLAYER</p>
+            <button id="hostGameBtn" class="lobby-btn">Host Game</button>
+            <button id="joinGameBtn" class="lobby-btn secondary">Join Game</button>
+        </div>
+    </div>
+
+    <!-- Host Screen -->
+    <div id="host-screen" class="lobby-screen">
+        <div class="welcome-card">
+            <p class="welcome-subtitle">SHARE THIS ROOM ID</p>
+            <div class="room-id-display" id="hostRoomIdDisplay"></div>
+            <p class="welcome-subtitle" id="hostWaitingText">WAITING FOR OPPONENT...</p>
+            <button id="hostBackBtn" class="lobby-btn secondary">Back</button>
+        </div>
+    </div>
+
+    <!-- Join Screen -->
+    <div id="join-screen" class="lobby-screen">
+        <div class="welcome-card">
+            <p class="welcome-subtitle">ENTER ROOM ID</p>
+            <div class="join-input-group">
+                <input type="text" id="roomIdInput" class="join-room-input" placeholder="e.g. 042" maxlength="3" inputmode="numeric" autocomplete="off" spellcheck="false" />
+            </div>
+            <button id="joinSubmitBtn" class="join-submit-btn">Submit</button>
+            <button id="joinBackBtn" class="lobby-btn secondary">Back</button>
+        </div>
+    </div>
+
+    <div id="game-wrap" style="display: none;">
+        <div id="board-container"></div>
+        <div class="action-bar">
+            <button class="fab fab-surrender" id="surrenderBtn" title="Surrender">🏳️</button>
+            <button class="fab fab-draw" id="drawBtn" title="Offer Draw">🤝</button>
+            <button class="fab fab-chat" id="chatToggleBtn" title="Chat">💬<span class="chat-badge" id="chatBadge"></span></button>
+        </div>
+    </div>
+
+    <div id="chat-panel">
+        <div class="chat-header">
+            <div class="chat-opponent-info">
+                <span class="chat-opponent-name" id="chatOpponentName">Opponent</span>
+                <span class="chat-status"><span class="status-dot"></span>Online</span>
+            </div>
+            <button class="chat-close" id="chatCloseBtn">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-row">
+            <input type="text" id="chatInput" placeholder="Type a message..." />
+            <button class="send-btn" id="chatSendBtn">➤</button>
+        </div>
+    </div>
+
+    <!-- Surrender Modal -->
+    <div id="surrender-modal">
+        <div class="surrender-dialog">
+            <div class="surrender-title">Confirm Surrender</div>
+            <div class="surrender-text">Are you sure you want to surrender?</div>
+            <div class="surrender-btn-group-modal">
+                <button class="surrender-action-btn yes-btn" id="surrenderYesBtn">Yes</button>
+                <button class="surrender-action-btn no-btn" id="surrenderNoBtn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Draw Modal -->
+    <div id="draw-modal">
+        <div class="draw-dialog">
+            <div class="draw-title">Request Draw</div>
+            <div class="draw-text">Do you want to send a draw request to your opponent?</div>
+            <div class="draw-btn-group-modal">
+                <button class="draw-action-btn draw-yes-btn" id="drawYesBtn">Yes</button>
+                <button class="draw-action-btn draw-no-btn" id="drawNoBtn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incoming Draw Request Modal -->
+    <div id="draw-incoming-modal">
+        <div class="draw-dialog">
+            <div class="draw-title">Draw Offer</div>
+            <div class="draw-text" id="drawIncomingText">Your opponent has offered a draw. Do you accept?</div>
+            <div class="draw-btn-group-modal">
+                <button class="draw-action-btn draw-yes-btn" id="drawAcceptBtn">Accept</button>
+                <button class="draw-action-btn draw-no-btn" id="drawRejectBtn">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incoming Rematch Request Modal -->
+    <div id="rematch-incoming-modal">
+        <div class="draw-dialog">
+            <div class="draw-title">Rematch Offer</div>
+            <div class="draw-text">Opponent has requested a rematch. Do you accept?</div>
+            <div class="draw-btn-group-modal">
+                <button class="draw-action-btn draw-yes-btn" id="rematchAcceptBtn">Accept</button>
+                <button class="draw-action-btn draw-no-btn" id="rematchRejectBtn">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Screen -->
+    <div id="winner-screen">
+        <canvas id="confetti-canvas"></canvas>
+        <audio id="winnerSound" src="sounds/Victory.mp3" preload="auto"></audio>
+        <div class="winner-title" id="winnerTitle"></div>
+        <div class="winner-name" id="winnerNameDisplay"></div>
+        <div class="winner-subtitle" id="winnerSubtitle">WINNER</div>
+        <div class="winner-btn-group">
+            <button class="winner-btn primary" id="playAgainBtn">REMATCH</button>
+            <button class="winner-btn secondary" id="mainMenuBtn">Main Menu</button>
+        </div>
+    </div>
+
+    <script>
+        const EMPTY = 0, GRAY_MAN = 1, BLACK_MAN = 2, GRAY_KING = 3, BLACK_KING = 4;
+        const BOARD_SIZE = 8;
+        
+        let board = [];
+        let turn = 1; // 1: Gray, 2: Black
+        let selectedSquare = null; 
+        let possibleMoves = [];
+        let mandatoryCaptures = [];
+        let isMultiJumping = false;
+        let deadPieces = [];
+        let squaresDOM = [];
+
+        // Multiplayer state
+        let isOnlineMode = false;
+        let myRole = null; // 1 = Host (Gray), 2 = Joiner (Black)
+        let currentRoomId = null;
+        let opponentUsername = null;
+        let playerNames = { 1: null, 2: null };
+        let unreadChatCount = 0;
+        let drawRequestPending = false;
+
+        const isGray = (p) => p === GRAY_MAN || p === GRAY_KING;
+        const isBlack = (p) => p === BLACK_MAN || p === BLACK_KING;
+        const isKing = (p) => p === GRAY_KING || p === BLACK_KING;
+        const isEnemy = (p1, p2) => (isGray(p1) && isBlack(p2)) || (isBlack(p1) && isGray(p2));
+        const inBounds = (r, c) => r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE;
+
+        let audioCtx = null;
+        function playMoveSound() {
+            try {
+                if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(3.0, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        function init() {
+            const container = document.getElementById('board-container');
+            for(let r=0; r<BOARD_SIZE; r++) {
+                board[r] = [];
+                squaresDOM[r] = [];
+                for(let c=0; c<BOARD_SIZE; c++) {
+                    let sq = document.createElement('div');
+                    sq.className = `sq ${(r+c)%2===0 ? 'light' : 'dark'}`;
+                    sq.dataset.r = r;
+                    sq.dataset.c = c;
+                    sq.addEventListener('pointerdown', handleTouch);
+                    container.appendChild(sq);
+                    squaresDOM[r][c] = sq;
+
+                    if((r+c)%2===1) {
+                        if(r < 3) board[r][c] = BLACK_MAN;
+                        else if(r > 4) board[r][c] = GRAY_MAN;
+                        else board[r][c] = EMPTY;
+                    } else {
+                        board[r][c] = EMPTY;
+                    }
+                }
+            }
+            mandatoryCaptures = getAllCaptures(turn);
+            render();
+        }
+
+        function getPieceCaptures(r, c, piece, currentDead) {
+            let captures = [];
+            const dirs = [[-1,-1], [-1,1], [1,-1], [1,1]];
+
+            if(!isKing(piece)) {
+                for(let [dr, dc] of dirs) {
+                    let r1 = r+dr, c1 = c+dc;
+                    let r2 = r+dr*2, c2 = c+dc*2;
+                    if(inBounds(r2, c2)) {
+                        let p1 = board[r1][c1];
+                        let p2 = board[r2][c2];
+                        let isDead = currentDead.some(d => d.r === r1 && d.c === c1);
+                        
+                        if(isEnemy(piece, p1) && !isDead && p2 === EMPTY) {
+                            captures.push({from: {r,c}, to: {r:r2, c:c2}, jump: {r:r1, c:c1}});
+                        }
+                    }
+                }
+            } else {
+                for(let [dr, dc] of dirs) {
+                    let cr = r + dr, cc = c + dc;
+                    let enemy = null;
+                    while(inBounds(cr, cc)) {
+                        let p = board[cr][cc];
+                        let isDead = currentDead.some(d => d.r === cr && d.c === cc);
+
+                        if (p !== EMPTY && !isDead) {
+                            if (isEnemy(piece, p)) {
+                                enemy = {r: cr, c: cc};
+                                break;
+                            } else {
+                                break;
+                            }
+                        }
+                        if (isDead) break; // Dead piece blocks path
+                        cr += dr; cc += dc;
+                    }
+
+                    if (enemy) {
+                        cr = enemy.r + dr;
+                        cc = enemy.c + dc;
+                        while(inBounds(cr, cc)) {
+                            let p = board[cr][cc];
+                            let isDead = currentDead.some(d => d.r === cr && d.c === cc);
+                            if (p === EMPTY && !isDead) {
+                                captures.push({from: {r,c}, to: {r:cr, c:cc}, jump: enemy});
+                            } else {
+                                break;
+                            }
+                            cr += dr; cc += dc;
+                        }
+                    }
+                }
+            }
+            return captures;
+        }
+
+        function getAllCaptures(playerTurn) {
+            let caps = [];
+            for(let r=0; r<BOARD_SIZE; r++) {
+                for(let c=0; c<BOARD_SIZE; c++) {
+                    let p = board[r][c];
+                    if((playerTurn === 1 && isGray(p)) || (playerTurn === 2 && isBlack(p))) {
+                        caps.push(...getPieceCaptures(r, c, p, []));
+                    }
+                }
+            }
+            return caps;
+        }
+
+        function getMovesForPiece(r, c) {
+            let p = board[r][c];
+            let caps = getPieceCaptures(r, c, p, []);
+            if(caps.length > 0) return caps;
+            if(mandatoryCaptures.length > 0) return [];
+
+            let moves = [];
+            if(!isKing(p)) {
+                let drs = isGray(p) ? [-1] : [1];
+                for(let dr of drs) {
+                    for(let dc of [-1, 1]) {
+                        let nr = r+dr, nc = c+dc;
+                        if(inBounds(nr, nc) && board[nr][nc] === EMPTY) {
+                            moves.push({from: {r,c}, to: {r:nr, c:nc}});
+                        }
+                    }
+                }
+            } else {
+                const dirs = [[-1,-1], [-1,1], [1,-1], [1,1]];
+                for(let [dr, dc] of dirs) {
+                    let nr = r+dr, nc = c+dc;
+                    while(inBounds(nr, nc) && board[nr][nc] === EMPTY) {
+                        moves.push({from: {r,c}, to: {r:nr, c:nc}});
+                        nr += dr; nc += dc;
+                    }
+                }
+            }
+            return moves;
+        }
+
+        function checkIfPlayerHasMoves(playerTurn) {
+            let caps = getAllCaptures(playerTurn);
+            if(caps.length > 0) return true;
+            
+            for(let r=0; r<BOARD_SIZE; r++) {
+                for(let c=0; c<BOARD_SIZE; c++) {
+                    let p = board[r][c];
+                    if((playerTurn === 1 && isGray(p)) || (playerTurn === 2 && isBlack(p))) {
+                        if(!isKing(p)) {
+                            let drs = isGray(p) ? [-1] : [1];
+                            for(let dr of drs) {
+                                for(let dc of [-1, 1]) {
+                                    let nr = r+dr, nc = c+dc;
+                                    if(inBounds(nr, nc) && board[nr][nc] === EMPTY) return true;
+                                }
+                            }
+                        } else {
+                            const dirs = [[-1,-1], [-1,1], [1,-1], [1,1]];
+                            for(let [dr, dc] of dirs) {
+                                let nr = r+dr, nc = c+dc;
+                                if(inBounds(nr, nc) && board[nr][nc] === EMPTY) return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        function triggerPremiumConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#ffd700', '#ffaa00', '#ff3366', '#00eeff', '#00ff66', '#ff00ff', '#ffffff', '#ff5722', '#4caf50'];
+            const shapes = ['circle', 'rect', 'streamer'];
+
+            const origins = [
+                { x: canvas.width * 0.3, y: canvas.height },
+                { x: canvas.width * 0.7, y: canvas.height }
+            ];
+
+            let burstsFired = 0;
+
+            function fireBurst(side) {
+                burstsFired++;
+                const origin = origins[side];
+                const count = 120;
+
+                if(side === 0) {
+                    const winnerSound = document.getElementById('winnerSound');
+                    winnerSound.currentTime = 0;
+                    winnerSound.play().catch(e => {});
+                }
+
+                for (let i = 0; i < count; i++) {
+                    let angle = -Math.PI / 2 + (Math.random() * 1.0 - 0.5);
+
+                    const velocity = Math.random() * 26 + 15;
+                    
+                    particles.push({
+                        x: origin.x,
+                        y: origin.y,
+                        vx: Math.cos(angle) * velocity,
+                        vy: Math.sin(angle) * velocity,
+                        size: Math.random() * 10 + 6,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        rot: Math.random() * 360,
+                        rotSpeed: Math.random() * 16 - 8,
+                        shape: shapes[Math.floor(Math.random() * shapes.length)],
+                        wobble: Math.random() * 10,
+                        wobbleSpeed: Math.random() * 0.1 + 0.05,
+                        life: 1.0,
+                        decay: Math.random() * 0.008 + 0.008
+                    });
+                }
+            }
+
+            fireBurst(0);
+            setTimeout(() => fireBurst(1), 400);
+
+            let animationFrame;
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        active = true;
+                        p.vy += 0.35; 
+                        p.vx *= 0.98; 
+                        p.vy *= 0.99; 
+                        
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.rot += p.rotSpeed;
+                        p.wobble += p.wobbleSpeed;
+                        
+                        p.life -= p.decay;
+                        
+                        const alpha = Math.max(0, Math.min(1, p.life * 3));
+                        ctx.globalAlpha = alpha;
+                        
+                        ctx.save();
+                        const wobbleX = p.shape === 'streamer' ? Math.cos(p.wobble) * 12 : Math.cos(p.wobble) * 4;
+                        ctx.translate(p.x + wobbleX, p.y);
+                        ctx.rotate(p.rot * Math.PI / 180);
+                        
+                        ctx.fillStyle = p.color;
+                        
+                        if (p.shape === 'circle') {
+                            ctx.beginPath();
+                            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                            ctx.fill();
+                        } else if (p.shape === 'rect') {
+                            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                        } else if (p.shape === 'streamer') {
+                            ctx.fillRect(-p.size / 4, -p.size, p.size / 2, p.size * 2.5);
+                        }
+                        ctx.restore();
+                    }
+                });
+
+                if (active || burstsFired < 2) {
+                    animationFrame = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            
+            animate();
+        }
+
+        function triggerGameOver(result) {
+            const winnerScreen = document.getElementById('winner-screen');
+            const winnerNameDisplay = document.getElementById('winnerNameDisplay');
+            const winnerTitle = document.getElementById('winnerTitle');
+            const winnerSubtitle = document.getElementById('winnerSubtitle');
+
+            const isDraw = result === 'draw';
+
+            if(isDraw) {
+                winnerTitle.textContent = 'GAME OVER';
+                winnerNameDisplay.textContent = 'DRAW';
+                winnerSubtitle.textContent = "IT'S A DRAW";
+            } else {
+                let displayName;
+                if(isOnlineMode && playerNames[result]) {
+                    displayName = playerNames[result].toUpperCase();
+                } else {
+                    displayName = result === 1 ? 'GRAY' : 'BLACK';
+                }
+                winnerTitle.textContent = 'CHECKMATE!';
+                winnerNameDisplay.textContent = displayName;
+                winnerSubtitle.textContent = 'WINNER';
+            }
+
+            document.getElementById('game-wrap').style.display = 'none';
+            winnerScreen.classList.add('open');
+
+            triggerPremiumConfetti();
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+
+            if(isOnlineMode && turn !== myRole) return;
+
+            let r = parseInt(this.dataset.r);
+            let c = parseInt(this.dataset.c);
+
+            if(isMultiJumping) {
+                let move = possibleMoves.find(m => m.to.r === r && m.to.c === c);
+                if(move) executeMove(move);
+                return;
+            }
+
+            let p = board[r][c];
+            
+            if(p !== EMPTY && ((turn === 1 && isGray(p)) || (turn === 2 && isBlack(p)))) {
+                let movesForPiece = getMovesForPiece(r, c);
+                if(mandatoryCaptures.length > 0) {
+                    movesForPiece = movesForPiece.filter(m => m.jump);
+                }
+                if(movesForPiece.length > 0) {
+                    selectedSquare = {r, c};
+                    possibleMoves = movesForPiece;
+                    render();
+                } else {
+                    selectedSquare = null;
+                    possibleMoves = [];
+                    render();
+                }
+                return;
+            }
+
+            if(selectedSquare && p === EMPTY) {
+                let move = possibleMoves.find(m => m.to.r === r && m.to.c === c);
+                if(move) {
+                    executeMove(move);
+                } else {
+                    selectedSquare = null;
+                    possibleMoves = [];
+                    render();
+                }
+            }
+        }
+
+        function executeMove(move, fromRemote) {
+            if(isOnlineMode && !fromRemote && turn !== myRole) return;
+
+            let p = board[move.from.r][move.from.c];
+            board[move.to.r][move.to.c] = p;
+            board[move.from.r][move.from.c] = EMPTY;
+
+            playMoveSound();
+
+            // Promotion
+            if(isGray(p) && move.to.r === 0 && p !== GRAY_KING) {
+                board[move.to.r][move.to.c] = GRAY_KING;
+                p = GRAY_KING;
+            } else if(isBlack(p) && move.to.r === 7 && p !== BLACK_KING) {
+                board[move.to.r][move.to.c] = BLACK_KING;
+                p = BLACK_KING;
+            }
+
+            if(isOnlineMode && !fromRemote) {
+                window.firebaseAPI.sendMove(currentRoomId, myRole, move);
+            }
+
+            if(move.jump) {
+                deadPieces.push(move.jump);
+                let furtherCaptures = getPieceCaptures(move.to.r, move.to.c, p, deadPieces);
+                if(furtherCaptures.length > 0) {
+                    isMultiJumping = true;
+                    selectedSquare = move.to;
+                    possibleMoves = furtherCaptures;
+                    render();
+                    return;
+                }
+            }
+
+            deadPieces.forEach(d => board[d.r][d.c] = EMPTY);
+            deadPieces = [];
+            isMultiJumping = false;
+            selectedSquare = null;
+            possibleMoves = [];
+            turn = turn === 1 ? 2 : 1;
+            mandatoryCaptures = getAllCaptures(turn);
+            
+            if (!checkIfPlayerHasMoves(turn)) {
+                triggerGameOver(turn === 1 ? 2 : 1);
+            }
+            
+            // Auto skip if player has no valid moves
+            render();
+        }
+
+        function render() {
+            let hideOpponentVisuals = isOnlineMode && turn !== myRole;
+
+            for(let r=0; r<BOARD_SIZE; r++) {
+                for(let c=0; c<BOARD_SIZE; c++) {
+                    let sq = squaresDOM[r][c];
+                    
+                    let p = board[r][c];
+                    let pieceEl = sq.querySelector('.piece');
+                    
+                    if(p !== EMPTY) {
+                        if(!pieceEl) {
+                            pieceEl = document.createElement('div');
+                            pieceEl.className = 'piece';
+                            sq.insertBefore(pieceEl, sq.firstChild);
+                        }
+                        
+                        if(isGray(p)) { pieceEl.classList.add('gray'); pieceEl.classList.remove('black'); }
+                        else { pieceEl.classList.add('black'); pieceEl.classList.remove('gray'); }
+                        
+                        if(isKing(p)) pieceEl.classList.add('king'); else pieceEl.classList.remove('king');
+                        
+                        let shouldPulse = false;
+                        if((turn === 1 && isGray(p)) || (turn === 2 && isBlack(p))) {
+                            if(isMultiJumping) {
+                                shouldPulse = selectedSquare && selectedSquare.r === r && selectedSquare.c === c;
+                            } else if(mandatoryCaptures.length > 0) {
+                                shouldPulse = mandatoryCaptures.some(m => m.from.r === r && m.from.c === c);
+                            } else {
+                                shouldPulse = true;
+                            }
+                        }
+
+                        // Make the player see only the pulse animation in own pieces
+                        if (myRole === 1 && isBlack(p)) shouldPulse = false;
+                        if (myRole === 2 && isGray(p)) shouldPulse = false;
+                        if (myRole === null) shouldPulse = false;
+
+                        if(shouldPulse) pieceEl.classList.add('turn-pulse');
+                        else pieceEl.classList.remove('turn-pulse');
+                        
+                        let isSelected = selectedSquare && selectedSquare.r === r && selectedSquare.c === c;
+                        if(hideOpponentVisuals) isSelected = false;
+
+                        if(isSelected) pieceEl.classList.add('selected');
+                        else pieceEl.classList.remove('selected');
+                        
+                        if(deadPieces.some(d => d.r === r && d.c === c)) pieceEl.classList.add('dead');
+                        else pieceEl.classList.remove('dead');
+                    } else {
+                        if(pieceEl) sq.removeChild(pieceEl);
+                    }
+                    
+                    let hintEl = sq.querySelector('.move-hint');
+                    let showHint = possibleMoves.some(m => m.to.r === r && m.to.c === c);
+                    if(hideOpponentVisuals) showHint = false;
+
+                    if(showHint) {
+                        if(!hintEl) {
+                            hintEl = document.createElement('div');
+                            hintEl.className = 'move-hint';
+                            sq.appendChild(hintEl);
+                        }
+                    } else {
+                        if(hintEl) sq.removeChild(hintEl);
+                    }
+                }
+            }
+        }
+
+        // Welcome Screen Logic
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const usernameInput = document.getElementById('usernameInput');
+        const startBtn = document.getElementById('startBtn');
+        const gameWrap = document.getElementById('game-wrap');
+
+        usernameInput.addEventListener('input', (e) => {
+            if (e.target.value.trim().length > 0) {
+                startBtn.disabled = false;
+            } else {
+                startBtn.disabled = true;
+            }
+        });
+
+        usernameInput.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && !startBtn.disabled) {
+                startBtn.click();
+            }
+        });
+
+        startBtn.addEventListener('click', () => {
+            const val = usernameInput.value.trim();
+            if (val) {
+                window.playerUsername = val;
+                try { sessionStorage.setItem('checkers_username', val); } catch(e){}
+                
+                welcomeScreen.classList.add('hidden');
+                welcomeScreen.style.display = 'none';
+                document.getElementById('multiplayer-menu').classList.add('open');
+            }
+        });
+
+        // --- Multiplayer Lobby ---
+        const multiplayerMenu = document.getElementById('multiplayer-menu');
+        const hostScreen = document.getElementById('host-screen');
+        const joinScreen = document.getElementById('join-screen');
+        const hostGameBtn = document.getElementById('hostGameBtn');
+        const joinGameBtn = document.getElementById('joinGameBtn');
+        const hostBackBtn = document.getElementById('hostBackBtn');
+        const joinBackBtn = document.getElementById('joinBackBtn');
+        const hostRoomIdDisplay = document.getElementById('hostRoomIdDisplay');
+        const hostWaitingText = document.getElementById('hostWaitingText');
+        const roomIdInput = document.getElementById('roomIdInput');
+        const joinSubmitBtn = document.getElementById('joinSubmitBtn');
+
+        function generateRoomId() {
+            let id;
+            do {
+                id = Math.floor(Math.random() * 999) + 1; // 1 to 999
+            } while (id === 666);
+            return id.toString().padStart(3, '0');
+        }
+
+        function enterMultiplayerGame() {
+            multiplayerMenu.classList.remove('open');
+            hostScreen.classList.remove('open');
+            joinScreen.classList.remove('open');
+            gameWrap.style.display = 'flex';
+
+            const boardContainer = document.getElementById('board-container');
+            if(myRole === 2) {
+                boardContainer.classList.add('flipped');
+            } else {
+                boardContainer.classList.remove('flipped');
+            }
+
+            const chatOpponentName = document.getElementById('chatOpponentName');
+            if(chatOpponentName) chatOpponentName.textContent = opponentUsername || 'Opponent';
+            
+            render();
+        }
+
+        hostGameBtn.addEventListener('click', () => {
+            const roomId = generateRoomId();
+            currentRoomId = roomId;
+            myRole = 1;
+            isOnlineMode = true;
+            hostRoomIdDisplay.textContent = roomId;
+            hostWaitingText.textContent = 'WAITING FOR OPPONENT...';
+            multiplayerMenu.classList.remove('open');
+            hostScreen.classList.add('open');
+
+            window.firebaseAPI.createRoom(roomId, window.playerUsername, {
+                onJoined: (joinerName) => {
+                    opponentUsername = joinerName;
+                    playerNames[1] = window.playerUsername;
+                    playerNames[2] = joinerName;
+                    hostWaitingText.textContent = joinerName + ' JOINED!';
+                    enterMultiplayerGame();
+                },
+                onRemoteMove: (move) => {
+                    executeMove(move, true);
+                },
+                onChatMessage: (text) => {
+                    receiveChatMessage(text);
+                },
+                onRemoteEvent: (data) => {
+                    handleRemoteEvent(data);
+                }
+            });
+        });
+
+        hostBackBtn.addEventListener('click', () => {
+            hostScreen.classList.remove('open');
+            multiplayerMenu.classList.add('open');
+            isOnlineMode = false;
+            myRole = null;
+            currentRoomId = null;
+        });
+
+        joinGameBtn.addEventListener('click', () => {
+            multiplayerMenu.classList.remove('open');
+            joinScreen.classList.add('open');
+            roomIdInput.value = '';
+        });
+
+        joinBackBtn.addEventListener('click', () => {
+            joinScreen.classList.remove('open');
+            multiplayerMenu.classList.add('open');
+        });
+
+        joinSubmitBtn.addEventListener('click', () => {
+            const roomId = roomIdInput.value.trim();
+            if(!/^\d{3}$/.test(roomId)) {
+                alert('Please enter a valid 3-digit Room ID.');
+                return;
+            }
+
+            window.firebaseAPI.joinRoom(roomId, window.playerUsername, {
+                onJoined: (hostName) => {
+                    currentRoomId = roomId;
+                    myRole = 2;
+                    isOnlineMode = true;
+                    opponentUsername = hostName;
+                    playerNames[1] = hostName;
+                    playerNames[2] = window.playerUsername;
+                    enterMultiplayerGame();
+                },
+                onError: (msg) => {
+                    alert(msg);
+                },
+                onRemoteMove: (move) => {
+                    executeMove(move, true);
+                },
+                onChatMessage: (text) => {
+                    receiveChatMessage(text);
+                },
+                onRemoteEvent: (data) => {
+                    handleRemoteEvent(data);
+                }
+            });
+        });
+
+        // --- Action bar & chat ---
+        const chatPanel = document.getElementById('chat-panel');
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
+        const surrenderBtn = document.getElementById('surrenderBtn');
+        const drawBtn = document.getElementById('drawBtn');
+        
+        const surrenderModal = document.getElementById('surrender-modal');
+        const surrenderYesBtn = document.getElementById('surrenderYesBtn');
+        const surrenderNoBtn = document.getElementById('surrenderNoBtn');
+
+        const drawModal = document.getElementById('draw-modal');
+        const drawYesBtn = document.getElementById('drawYesBtn');
+        const drawNoBtn = document.getElementById('drawNoBtn');
+
+        const drawIncomingModal = document.getElementById('draw-incoming-modal');
+        const drawAcceptBtn = document.getElementById('drawAcceptBtn');
+        const drawRejectBtn = document.getElementById('drawRejectBtn');
+
+        const rematchIncomingModal = document.getElementById('rematch-incoming-modal');
+        const rematchAcceptBtn = document.getElementById('rematchAcceptBtn');
+        const rematchRejectBtn = document.getElementById('rematchRejectBtn');
+
+        const chatBadge = document.getElementById('chatBadge');
+
+        function addMessage(text, sender) {
+            let msg = document.createElement('div');
+            msg.className = `msg ${sender}`;
+            msg.textContent = text;
+            chatMessages.appendChild(msg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function isChatOpen() {
+            return chatPanel.classList.contains('open');
+        }
+
+        function updateChatBadge() {
+            if(unreadChatCount > 0) {
+                chatBadge.textContent = unreadChatCount > 9 ? '9+' : String(unreadChatCount);
+                chatBadge.classList.add('show');
+            } else {
+                chatBadge.classList.remove('show');
+            }
+        }
+
+        function openChat() {
+            chatPanel.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            unreadChatCount = 0;
+            updateChatBadge();
+        }
+
+        function closeChat() {
+            chatPanel.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        chatToggleBtn.addEventListener('click', () => {
+            if(chatPanel.classList.contains('open')) closeChat();
+            else openChat();
+        });
+
+        chatCloseBtn.addEventListener('click', closeChat);
+
+        function sendChatMessage() {
+            let text = chatInput.value.trim();
+            if(!text) return;
+            addMessage(text, 'me');
+            chatInput.value = '';
+
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendChat(currentRoomId, myRole, text);
+            }
+        }
+
+        function receiveChatMessage(text) {
+            addMessage(text, 'opponent');
+            if(!isChatOpen()) {
+                unreadChatCount++;
+                updateChatBadge();
+            }
+        }
+
+        chatSendBtn.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') sendChatMessage();
+        });
+
+        // --- Toast notifications ---
+        const toastContainer = document.getElementById('toast-container');
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2600);
+        }
+
+        surrenderBtn.addEventListener('click', () => {
+            surrenderModal.classList.add('open');
+        });
+
+        surrenderNoBtn.addEventListener('click', () => {
+            surrenderModal.classList.remove('open');
+        });
+
+        surrenderYesBtn.addEventListener('click', () => {
+            surrenderModal.classList.remove('open');
+
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'surrender',
+                    by: myRole,
+                    ts: Date.now()
+                });
+            } else {
+                triggerGameOver(turn === 1 ? 2 : 1);
+            }
+        });
+
+        drawBtn.addEventListener('click', () => {
+            if(isOnlineMode && drawRequestPending) return;
+            drawModal.classList.add('open');
+        });
+
+        drawNoBtn.addEventListener('click', () => {
+            drawModal.classList.remove('open');
+        });
+
+        drawYesBtn.addEventListener('click', () => {
+            drawModal.classList.remove('open');
+
+            if(isOnlineMode && currentRoomId) {
+                drawRequestPending = true;
+                drawBtn.disabled = true;
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'drawRequest',
+                    by: myRole,
+                    ts: Date.now()
+                });
+            } else {
+                alert('Draw offer sent to your opponent.');
+            }
+        });
+
+        drawAcceptBtn.addEventListener('click', () => {
+            drawIncomingModal.classList.remove('open');
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'drawResponse',
+                    response: 'accepted',
+                    by: myRole,
+                    ts: Date.now()
+                });
+            }
+        });
+
+        drawRejectBtn.addEventListener('click', () => {
+            drawIncomingModal.classList.remove('open');
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'drawResponse',
+                    response: 'rejected',
+                    by: myRole,
+                    ts: Date.now()
+                });
+            }
+        });
+
+        rematchAcceptBtn.addEventListener('click', () => {
+            rematchIncomingModal.classList.remove('open');
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'rematchResponse',
+                    response: 'accepted',
+                    by: myRole,
+                    ts: Date.now()
+                });
+            }
+        });
+
+        rematchRejectBtn.addEventListener('click', () => {
+            rematchIncomingModal.classList.remove('open');
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'rematchResponse',
+                    response: 'rejected',
+                    by: myRole,
+                    ts: Date.now()
+                });
+            }
+        });
+
+        function resetGameForRematch() {
+            document.getElementById('winner-screen').classList.remove('open');
+            document.getElementById('game-wrap').style.display = 'flex';
+            
+            const playAgainBtn = document.getElementById('playAgainBtn');
+            playAgainBtn.disabled = false;
+            playAgainBtn.textContent = 'REMATCH';
+            
+            document.getElementById('board-container').innerHTML = '';
+            
+            turn = 1;
+            selectedSquare = null;
+            possibleMoves = [];
+            isMultiJumping = false;
+            deadPieces = [];
+            unreadChatCount = 0;
+            drawRequestPending = false;
+            drawBtn.disabled = false;
+            updateChatBadge();
+            
+            init();
+            
+            showToast('Game restarted!');
+        }
+
+        // --- Remote event dispatcher (surrender / draw requests / draw responses / rematch requests / rematch responses) ---
+        function handleRemoteEvent(data) {
+            if(!data || !data.type) return;
+
+            switch(data.type) {
+                case 'surrender': {
+                    const winner = data.by === 1 ? 2 : 1;
+                    triggerGameOver(winner);
+                    break;
+                }
+                case 'drawRequest': {
+                    if(data.by !== myRole) {
+                        drawIncomingModal.classList.add('open');
+                    } else {
+                        showToast('Draw request sent. Waiting for response...');
+                    }
+                    break;
+                }
+                case 'drawResponse': {
+                    drawRequestPending = false;
+                    drawBtn.disabled = false;
+                    drawIncomingModal.classList.remove('open');
+
+                    if(data.response === 'accepted') {
+                        triggerGameOver('draw');
+                    } else if(data.by !== myRole) {
+                        showToast('Your opponent declined the draw offer.');
+                    }
+                    break;
+                }
+                case 'rematchRequest': {
+                    if(data.by !== myRole) {
+                        rematchIncomingModal.classList.add('open');
+                    }
+                    break;
+                }
+                case 'rematchResponse': {
+                    if(data.response === 'accepted') {
+                        resetGameForRematch();
+                    } else if(data.by !== myRole) {
+                        showToast('Your opponent declined the rematch offer.');
+                        const playAgainBtn = document.getElementById('playAgainBtn');
+                        playAgainBtn.disabled = false;
+                        playAgainBtn.textContent = 'REMATCH';
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Winner Screen Actions
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'rematchRequest',
+                    by: myRole,
+                    ts: Date.now()
+                });
+                const btn = document.getElementById('playAgainBtn');
+                btn.disabled = true;
+                btn.textContent = 'WAITING...';
+                showToast('Rematch request sent.');
+            } else {
+                location.reload();
+            }
+        });
+
+        document.getElementById('mainMenuBtn').addEventListener('click', () => {
+            document.getElementById('winner-screen').classList.remove('open');
+            document.getElementById('game-wrap').style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'flex';
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            
+            document.getElementById('startBtn').innerHTML = 'Start Game';
+            document.getElementById('startBtn').style.pointerEvents = 'auto';
+            
+            const playAgainBtn = document.getElementById('playAgainBtn');
+            playAgainBtn.disabled = false;
+            playAgainBtn.textContent = 'REMATCH';
+            
+            document.getElementById('board-container').innerHTML = '';
+            document.getElementById('board-container').classList.remove('flipped');
+            turn = 1;
+            selectedSquare = null;
+            possibleMoves = [];
+            isMultiJumping = false;
+            deadPieces = [];
+            isOnlineMode = false;
+            myRole = null;
+            currentRoomId = null;
+            opponentUsername = null;
+            playerNames = { 1: null, 2: null };
+            unreadChatCount = 0;
+            drawRequestPending = false;
+            drawBtn.disabled = false;
+            updateChatBadge();
+            init();
+        });
+
+        init();
+    </script>
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+      // Add SDK for Realtime Database or Firestore here
+      import { getDatabase, ref, set, get, update, push, onValue, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDevsqZpjhEahdzC8AEmpz9ME8ZyavebHA",
+        authDomain: "new-dama.firebaseapp.com",
+        projectId: "new-dama",
+        storageBucket: "new-dama.firebasestorage.app",
+        messagingSenderId: "963966810180",
+        appId: "1:963966810180:web:02650aeecbb7c6ce8fa411",
+        databaseURL: "https://new-dama-default-rtdb.asia-southeast1.firebasedatabase.app"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app, "https://new-dama-default-rtdb.asia-southeast1.firebasedatabase.app");
+
+      window.firebaseAPI = {
+        createRoom: async function(roomId, hostName, callbacks) {
+          const roomRef = ref(db, 'rooms/' + roomId);
+          await set(roomRef, {
+            host: hostName,
+            joiner: null,
+            status: 'waiting',
+            turn: 1,
+            createdAt: Date.now()
+          });
+
+          onDisconnect(roomRef).remove();
+
+          let hasJoined = false;
+          onValue(roomRef, (snapshot) => {
+            const data = snapshot.val();
+            if(!data) return;
+            if(!hasJoined && data.joiner && data.status === 'active') {
+              hasJoined = true;
+              callbacks.onJoined(data.joiner);
+            }
+          });
+
+          const movesRef = ref(db, 'rooms/' + roomId + '/moves');
+          onChildAdded(movesRef, (snapshot) => {
+            const moveData = snapshot.val();
+            if(moveData && moveData.by !== 1) {
+              callbacks.onRemoteMove(moveData.move);
+            }
+          });
+
+          const chatsRef = ref(db, 'rooms/' + roomId + '/chats');
+          onChildAdded(chatsRef, (snapshot) => {
+            const chatData = snapshot.val();
+            if(chatData && chatData.by !== 1 && callbacks.onChatMessage) {
+              callbacks.onChatMessage(chatData.text, chatData.by);
+            }
+          });
+
+          const eventsRef = ref(db, 'rooms/' + roomId + '/events');
+          onChildAdded(eventsRef, (snapshot) => {
+            const eventData = snapshot.val();
+            if(eventData && callbacks.onRemoteEvent) {
+              callbacks.onRemoteEvent(eventData);
+            }
+          });
+        },
+
+        joinRoom: async function(roomId, joinerName, callbacks) {
+          const roomRef = ref(db, 'rooms/' + roomId);
+          const snapshot = await get(roomRef);
+          const data = snapshot.val();
+
+          if(!data) {
+            callbacks.onError('Room not found.');
+            return;
+          }
+          if(data.status === 'active' || data.joiner) {
+            callbacks.onError('Room is already full.');
+            return;
+          }
+
+          await update(roomRef, {
+            joiner: joinerName,
+            status: 'active'
+          });
+
+          const movesRef = ref(db, 'rooms/' + roomId + '/moves');
+          onChildAdded(movesRef, (snapshot) => {
+            const moveData = snapshot.val();
+            if(moveData && moveData.by !== 2) {
+              callbacks.onRemoteMove(moveData.move);
+            }
+          });
+
+          const chatsRef = ref(db, 'rooms/' + roomId + '/chats');
+          onChildAdded(chatsRef, (snapshot) => {
+            const chatData = snapshot.val();
+            if(chatData && chatData.by !== 2 && callbacks.onChatMessage) {
+              callbacks.onChatMessage(chatData.text, chatData.by);
+            }
+          });
+
+          const eventsRef = ref(db, 'rooms/' + roomId + '/events');
+          onChildAdded(eventsRef, (snapshot) => {
+            const eventData = snapshot.val();
+            if(eventData && callbacks.onRemoteEvent) {
+              callbacks.onRemoteEvent(eventData);
+            }
+          });
+
+          callbacks.onJoined(data.host);
+        },
+
+        sendMove: function(roomId, byRole, move) {
+          const movesRef = ref(db, 'rooms/' + roomId + '/moves');
+          push(movesRef, {
+            by: byRole,
+            move: move,
+            ts: Date.now()
+          });
+        },
+
+        sendChat: function(roomId, byRole, text) {
+          const chatsRef = ref(db, 'rooms/' + roomId + '/chats');
+          push(chatsRef, {
+            by: byRole,
+            text: text,
+            ts: Date.now()
+          });
+        },
+
+        sendEvent: function(roomId, eventObj) {
+          const eventsRef = ref(db, 'rooms/' + roomId + '/events');
+          push(eventsRef, eventObj);
+        }
+      };
+    </script>
+</body>
+</html>
+   ground: rgba(0, 0, 0, 0.4);
             border-color: rgba(255, 255, 255, 0.25);
         }
 
