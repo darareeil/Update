@@ -417,6 +417,7 @@
             z-index: 2;
             text-align: center;
             transform: translateZ(0);
+            white-space: nowrap;
         }
 
         .winner-subtitle {
@@ -1079,7 +1080,7 @@
     <div id="multiplayer-menu" class="lobby-screen">
         <div class="welcome-card">
             <h1 class="welcome-title">WELCOME</h1>
-            <p class="welcome-subtitle" id="multiplayerUsernameDisplay" style="text-transform: none;">MULTIPLAYER</p>
+            <p class="welcome-subtitle" id="multiplayerUsernameDisplay" style="text-transform: none; white-space: nowrap;">MULTIPLAYER</p>
             <button id="hostGameBtn" class="lobby-btn">Host Game</button>
             <button id="joinGameBtn" class="lobby-btn secondary">Join Game</button>
             <button id="multiplayerBackBtn" class="lobby-btn secondary">Back</button>
@@ -1183,7 +1184,6 @@
         <div class="winner-title" id="winnerTitle"></div>
         <div class="winner-name" id="winnerNameDisplay"></div>
         <div class="winner-subtitle" id="winnerSubtitle">WINNER</div>
-        <div id="opponentLeftMsg" style="display: none; color: #ff5252; font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 2; letter-spacing: 2px;">Opponent Left</div>
         <div class="winner-btn-group">
             <button class="winner-btn primary" id="playAgainBtn">REMATCH</button>
             <button class="winner-btn secondary" id="mainMenuBtn">Main Menu</button>
@@ -1525,6 +1525,14 @@
                 winnerSubtitle.textContent = 'WINNER';
             }
 
+            winnerNameDisplay.style.fontSize = '3.5rem';
+            let currentSize = 3.5;
+            let maxWidth = window.innerWidth * 0.9;
+            while (winnerNameDisplay.scrollWidth > maxWidth && currentSize > 0.5) {
+                currentSize -= 0.1;
+                winnerNameDisplay.style.fontSize = currentSize + 'rem';
+            }
+
             document.getElementById('game-wrap').style.display = 'none';
             winnerScreen.classList.add('open');
 
@@ -1738,6 +1746,17 @@
                 welcomeScreen.classList.add('hidden');
                 welcomeScreen.style.display = 'none';
                 document.getElementById('multiplayer-menu').classList.add('open');
+
+                if(multiplayerUsernameDisplay) {
+                    multiplayerUsernameDisplay.style.fontSize = '1.1rem';
+                    let currentSize = 1.1;
+                    let maxWidth = window.innerWidth * 0.9 - 80;
+                    if(maxWidth > 340) maxWidth = 340;
+                    while (multiplayerUsernameDisplay.scrollWidth > maxWidth && currentSize > 0.4) {
+                        currentSize -= 0.1;
+                        multiplayerUsernameDisplay.style.fontSize = currentSize + 'rem';
+                    }
+                }
             }
         });
 
@@ -2149,7 +2168,7 @@
                     if(data.response === 'accepted') {
                         resetGameForRematch();
                     } else if(data.by !== myRole) {
-                        showToast('Declined the rematch offer.');
+                        showToast('Declined offer.');
                         const playAgainBtn = document.getElementById('playAgainBtn');
                         playAgainBtn.disabled = false;
                         playAgainBtn.textContent = 'REMATCH';
@@ -2167,7 +2186,7 @@
                         document.getElementById('draw-incoming-modal').classList.remove('open');
                         document.getElementById('draw-modal').classList.remove('open');
                         document.getElementById('surrender-modal').classList.remove('open');
-                        showToast('Opponent left the match.');
+                        showToast('Opponent left.');
 
                         if (document.getElementById('game-wrap').style.display !== 'none') {
                             triggerGameOver(myRole);
@@ -2181,7 +2200,7 @@
         // Winner Screen Actions
         document.getElementById('playAgainBtn').addEventListener('click', () => {
             if(opponentLeft) {
-                showToast('Opponent has left the match.');
+                showToast('Opponent left.');
                 return;
             }
             if(isOnlineMode && currentRoomId) {
