@@ -230,7 +230,7 @@
 
         .chat-opponent-name {
             color: #f2e9df;
-            font-size: 12px;
+            font-size: 16px;
             font-weight: 600;
         }
 
@@ -238,7 +238,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
+            font-size: 14px;
             color: #9ba39e;
         }
 
@@ -284,7 +284,7 @@
             max-width: 75%;
             padding: 9px 13px;
             border-radius: 16px;
-            font-size: 12px;
+            font-size: 15px;
             line-height: 1.4;
             word-wrap: break-word;
         }
@@ -350,7 +350,7 @@
             color: #f2e9df;
             padding: 9px 12px;
             border-radius: 14px;
-            font-size: 12px;
+            font-size: 15px;
         }
 
         #chatInput::placeholder {
@@ -1068,7 +1068,7 @@
             <h1 class="welcome-title">DAMA KING</h1>
             <p class="welcome-subtitle">DUEL</p>
             <div class="welcome-input-group">
-                <input type="text" id="usernameInput" placeholder="Enter your username" autocomplete="off" spellcheck="false" />
+                <input type="text" id="usernameInput" placeholder="Enter your username" autocomplete="off" spellcheck="false" autocapitalize="off" />
                 <span class="welcome-input-icon">👤</span>
             </div>
             <button id="startBtn" disabled>Start Game</button>
@@ -1078,19 +1078,20 @@
     <!-- Multiplayer Menu -->
     <div id="multiplayer-menu" class="lobby-screen">
         <div class="welcome-card">
-            <h1 class="welcome-title">DAMA KING</h1>
-            <p class="welcome-subtitle">MULTIPLAYER</p>
+            <h1 class="welcome-title">WELCOME</h1>
+            <p class="welcome-subtitle" id="multiplayerUsernameDisplay" style="text-transform: none;">MULTIPLAYER</p>
             <button id="hostGameBtn" class="lobby-btn">Host Game</button>
             <button id="joinGameBtn" class="lobby-btn secondary">Join Game</button>
+            <button id="multiplayerBackBtn" class="lobby-btn secondary">Back</button>
         </div>
     </div>
 
     <!-- Host Screen -->
     <div id="host-screen" class="lobby-screen">
         <div class="welcome-card">
-            <p class="welcome-subtitle">SHARE THIS ROOM ID</p>
+            <p class="welcome-subtitle">ROOM ID</p>
             <div class="room-id-display" id="hostRoomIdDisplay"></div>
-            <p class="welcome-subtitle" id="hostWaitingText">WAITING FOR OPPONENT...</p>
+            <p class="welcome-subtitle" id="hostWaitingText" style="text-transform: none;">WAITING FOR OPPONENT...</p>
             <button id="hostBackBtn" class="lobby-btn secondary">Back</button>
         </div>
     </div>
@@ -1100,7 +1101,7 @@
         <div class="welcome-card">
             <p class="welcome-subtitle">ENTER ROOM ID</p>
             <div class="join-input-group">
-                <input type="text" id="roomIdInput" class="join-room-input" placeholder="e.g. 042" maxlength="3" inputmode="numeric" autocomplete="off" spellcheck="false" />
+                <input type="text" id="roomIdInput" class="join-room-input" placeholder="" maxlength="3" inputmode="numeric" autocomplete="off" spellcheck="false" />
             </div>
             <button id="joinSubmitBtn" class="join-submit-btn">Submit</button>
             <button id="joinBackBtn" class="lobby-btn secondary">Back</button>
@@ -1134,7 +1135,6 @@
     <!-- Surrender Modal -->
     <div id="surrender-modal">
         <div class="surrender-dialog">
-            <div class="surrender-title">Confirm Surrender</div>
             <div class="surrender-text">Are you sure you want to surrender?</div>
             <div class="surrender-btn-group-modal">
                 <button class="surrender-action-btn yes-btn" id="surrenderYesBtn">Yes</button>
@@ -1146,8 +1146,7 @@
     <!-- Draw Modal -->
     <div id="draw-modal">
         <div class="draw-dialog">
-            <div class="draw-title">Request Draw</div>
-            <div class="draw-text">Do you want to send a draw request to your opponent?</div>
+            <div class="draw-text">Send a draw request to your opponent?</div>
             <div class="draw-btn-group-modal">
                 <button class="draw-action-btn draw-yes-btn" id="drawYesBtn">Yes</button>
                 <button class="draw-action-btn draw-no-btn" id="drawNoBtn">No</button>
@@ -1158,7 +1157,6 @@
     <!-- Incoming Draw Request Modal -->
     <div id="draw-incoming-modal">
         <div class="draw-dialog">
-            <div class="draw-title">Draw Offer</div>
             <div class="draw-text" id="drawIncomingText">Your opponent has offered a draw. Do you accept?</div>
             <div class="draw-btn-group-modal">
                 <button class="draw-action-btn draw-yes-btn" id="drawAcceptBtn">Accept</button>
@@ -1170,7 +1168,6 @@
     <!-- Incoming Rematch Request Modal -->
     <div id="rematch-incoming-modal">
         <div class="draw-dialog">
-            <div class="draw-title">Rematch Offer</div>
             <div class="draw-text">Opponent has requested a rematch. Do you accept?</div>
             <div class="draw-btn-group-modal">
                 <button class="draw-action-btn draw-yes-btn" id="rematchAcceptBtn">Accept</button>
@@ -1186,6 +1183,7 @@
         <div class="winner-title" id="winnerTitle"></div>
         <div class="winner-name" id="winnerNameDisplay"></div>
         <div class="winner-subtitle" id="winnerSubtitle">WINNER</div>
+        <div id="opponentLeftMsg" style="display: none; color: #ff5252; font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 2; letter-spacing: 2px;">Opponent Left</div>
         <div class="winner-btn-group">
             <button class="winner-btn primary" id="playAgainBtn">REMATCH</button>
             <button class="winner-btn secondary" id="mainMenuBtn">Main Menu</button>
@@ -1213,6 +1211,7 @@
         let playerNames = { 1: null, 2: null };
         let unreadChatCount = 0;
         let drawRequestPending = false;
+        let opponentLeft = false;
 
         const isGray = (p) => p === GRAY_MAN || p === GRAY_KING;
         const isBlack = (p) => p === BLACK_MAN || p === BLACK_KING;
@@ -1517,7 +1516,7 @@
             } else {
                 let displayName;
                 if(isOnlineMode && playerNames[result]) {
-                    displayName = playerNames[result].toUpperCase();
+                    displayName = playerNames[result];
                 } else {
                     displayName = result === 1 ? 'GRAY' : 'BLACK';
                 }
@@ -1528,6 +1527,13 @@
 
             document.getElementById('game-wrap').style.display = 'none';
             winnerScreen.classList.add('open');
+
+            if (opponentLeft) {
+                const opponentLeftMsg = document.getElementById('opponentLeftMsg');
+                if (opponentLeftMsg) {
+                    opponentLeftMsg.style.display = 'block';
+                }
+            }
 
             triggerPremiumConfetti();
         }
@@ -1702,6 +1708,8 @@
         const usernameInput = document.getElementById('usernameInput');
         const startBtn = document.getElementById('startBtn');
         const gameWrap = document.getElementById('game-wrap');
+        const multiplayerUsernameDisplay = document.getElementById('multiplayerUsernameDisplay');
+        const multiplayerBackBtn = document.getElementById('multiplayerBackBtn');
 
         usernameInput.addEventListener('input', (e) => {
             if (e.target.value.trim().length > 0) {
@@ -1723,6 +1731,10 @@
                 window.playerUsername = val;
                 try { sessionStorage.setItem('checkers_username', val); } catch(e){}
                 
+                if(multiplayerUsernameDisplay) {
+                    multiplayerUsernameDisplay.textContent = val;
+                }
+
                 welcomeScreen.classList.add('hidden');
                 welcomeScreen.style.display = 'none';
                 document.getElementById('multiplayer-menu').classList.add('open');
@@ -1741,6 +1753,12 @@
         const hostWaitingText = document.getElementById('hostWaitingText');
         const roomIdInput = document.getElementById('roomIdInput');
         const joinSubmitBtn = document.getElementById('joinSubmitBtn');
+
+        multiplayerBackBtn.addEventListener('click', () => {
+            multiplayerMenu.classList.remove('open');
+            welcomeScreen.style.display = 'flex';
+            welcomeScreen.classList.remove('hidden');
+        });
 
         function generateRoomId() {
             let id;
@@ -1795,6 +1813,9 @@
                 },
                 onRemoteEvent: (data) => {
                     handleRemoteEvent(data);
+                },
+                onOpponentDisconnect: () => {
+                    handleRemoteEvent({ type: 'playerLeft', by: 2 });
                 }
             });
         });
@@ -1805,6 +1826,7 @@
             isOnlineMode = false;
             myRole = null;
             currentRoomId = null;
+            if(window.firebaseAPI.clearListeners) window.firebaseAPI.clearListeners();
         });
 
         joinGameBtn.addEventListener('click', () => {
@@ -1816,6 +1838,7 @@
         joinBackBtn.addEventListener('click', () => {
             joinScreen.classList.remove('open');
             multiplayerMenu.classList.add('open');
+            if(window.firebaseAPI.clearListeners) window.firebaseAPI.clearListeners();
         });
 
         joinSubmitBtn.addEventListener('click', () => {
@@ -1846,6 +1869,9 @@
                 },
                 onRemoteEvent: (data) => {
                     handleRemoteEvent(data);
+                },
+                onOpponentDisconnect: () => {
+                    handleRemoteEvent({ type: 'playerLeft', by: 1 });
                 }
             });
         });
@@ -2061,6 +2087,9 @@
             playAgainBtn.disabled = false;
             playAgainBtn.textContent = 'REMATCH';
             
+            const opponentLeftMsg = document.getElementById('opponentLeftMsg');
+            if (opponentLeftMsg) opponentLeftMsg.style.display = 'none';
+
             document.getElementById('board-container').innerHTML = '';
             
             turn = 1;
@@ -2070,6 +2099,7 @@
             deadPieces = [];
             unreadChatCount = 0;
             drawRequestPending = false;
+            opponentLeft = false;
             drawBtn.disabled = false;
             updateChatBadge();
             
@@ -2081,6 +2111,7 @@
         // --- Remote event dispatcher (surrender / draw requests / draw responses / rematch requests / rematch responses) ---
         function handleRemoteEvent(data) {
             if(!data || !data.type) return;
+            if(!isOnlineMode || !currentRoomId) return;
 
             switch(data.type) {
                 case 'surrender': {
@@ -2092,7 +2123,7 @@
                     if(data.by !== myRole) {
                         drawIncomingModal.classList.add('open');
                     } else {
-                        showToast('Draw request sent. Waiting for response...');
+                        showToast('Request sent.');
                     }
                     break;
                 }
@@ -2104,12 +2135,12 @@
                     if(data.response === 'accepted') {
                         triggerGameOver('draw');
                     } else if(data.by !== myRole) {
-                        showToast('Your opponent declined the draw offer.');
+                        showToast('Declined offer.');
                     }
                     break;
                 }
                 case 'rematchRequest': {
-                    if(data.by !== myRole) {
+                    if(data.by !== myRole && !opponentLeft) {
                         rematchIncomingModal.classList.add('open');
                     }
                     break;
@@ -2118,10 +2149,29 @@
                     if(data.response === 'accepted') {
                         resetGameForRematch();
                     } else if(data.by !== myRole) {
-                        showToast('Your opponent declined the rematch offer.');
+                        showToast('Declined the rematch offer.');
                         const playAgainBtn = document.getElementById('playAgainBtn');
                         playAgainBtn.disabled = false;
                         playAgainBtn.textContent = 'REMATCH';
+                    }
+                    break;
+                }
+                case 'playerLeft': {
+                    if(data.by !== myRole) {
+                        opponentLeft = true;
+                        const opponentLeftMsg = document.getElementById('opponentLeftMsg');
+                        if (opponentLeftMsg) {
+                            opponentLeftMsg.style.display = 'block';
+                        }
+                        document.getElementById('rematch-incoming-modal').classList.remove('open');
+                        document.getElementById('draw-incoming-modal').classList.remove('open');
+                        document.getElementById('draw-modal').classList.remove('open');
+                        document.getElementById('surrender-modal').classList.remove('open');
+                        showToast('Opponent left the match.');
+
+                        if (document.getElementById('game-wrap').style.display !== 'none') {
+                            triggerGameOver(myRole);
+                        }
                     }
                     break;
                 }
@@ -2130,6 +2180,10 @@
 
         // Winner Screen Actions
         document.getElementById('playAgainBtn').addEventListener('click', () => {
+            if(opponentLeft) {
+                showToast('Opponent has left the match.');
+                return;
+            }
             if(isOnlineMode && currentRoomId) {
                 window.firebaseAPI.sendEvent(currentRoomId, {
                     type: 'rematchRequest',
@@ -2139,14 +2193,24 @@
                 const btn = document.getElementById('playAgainBtn');
                 btn.disabled = true;
                 btn.textContent = 'WAITING...';
-                showToast('Rematch request sent.');
+                showToast('Request sent.');
             } else {
                 location.reload();
             }
         });
 
         document.getElementById('mainMenuBtn').addEventListener('click', () => {
+            if(isOnlineMode && currentRoomId) {
+                window.firebaseAPI.sendEvent(currentRoomId, {
+                    type: 'playerLeft',
+                    by: myRole,
+                    ts: Date.now()
+                });
+                if(window.firebaseAPI.clearListeners) window.firebaseAPI.clearListeners();
+            }
+
             document.getElementById('winner-screen').classList.remove('open');
+            document.getElementById('rematch-incoming-modal').classList.remove('open');
             document.getElementById('game-wrap').style.display = 'none';
             document.getElementById('welcome-screen').style.display = 'flex';
             document.getElementById('welcome-screen').classList.remove('hidden');
@@ -2157,6 +2221,9 @@
             const playAgainBtn = document.getElementById('playAgainBtn');
             playAgainBtn.disabled = false;
             playAgainBtn.textContent = 'REMATCH';
+
+            const opponentLeftMsg = document.getElementById('opponentLeftMsg');
+            if (opponentLeftMsg) opponentLeftMsg.style.display = 'none';
             
             document.getElementById('board-container').innerHTML = '';
             document.getElementById('board-container').classList.remove('flipped');
@@ -2172,6 +2239,7 @@
             playerNames = { 1: null, 2: null };
             unreadChatCount = 0;
             drawRequestPending = false;
+            opponentLeft = false;
             drawBtn.disabled = false;
             updateChatBadge();
             init();
@@ -2200,7 +2268,13 @@
       const db = getDatabase(app, "https://new-dama-default-rtdb.asia-southeast1.firebasedatabase.app");
 
       window.firebaseAPI = {
+        listeners: [],
+        clearListeners: function() {
+            this.listeners.forEach(unsub => unsub());
+            this.listeners = [];
+        },
         createRoom: async function(roomId, hostName, callbacks) {
+          this.clearListeners();
           const roomRef = ref(db, 'rooms/' + roomId);
           await set(roomRef, {
             host: hostName,
@@ -2213,41 +2287,49 @@
           onDisconnect(roomRef).remove();
 
           let hasJoined = false;
-          onValue(roomRef, (snapshot) => {
+          const unsubRoom = onValue(roomRef, (snapshot) => {
             const data = snapshot.val();
-            if(!data) return;
+            if(!data || data.status === 'abandoned') {
+                if (hasJoined && callbacks.onOpponentDisconnect) callbacks.onOpponentDisconnect();
+                return;
+            }
             if(!hasJoined && data.joiner && data.status === 'active') {
               hasJoined = true;
               callbacks.onJoined(data.joiner);
             }
           });
+          this.listeners.push(unsubRoom);
 
           const movesRef = ref(db, 'rooms/' + roomId + '/moves');
-          onChildAdded(movesRef, (snapshot) => {
+          const unsubMoves = onChildAdded(movesRef, (snapshot) => {
             const moveData = snapshot.val();
             if(moveData && moveData.by !== 1) {
               callbacks.onRemoteMove(moveData.move);
             }
           });
+          this.listeners.push(unsubMoves);
 
           const chatsRef = ref(db, 'rooms/' + roomId + '/chats');
-          onChildAdded(chatsRef, (snapshot) => {
+          const unsubChats = onChildAdded(chatsRef, (snapshot) => {
             const chatData = snapshot.val();
             if(chatData && chatData.by !== 1 && callbacks.onChatMessage) {
               callbacks.onChatMessage(chatData.text, chatData.by);
             }
           });
+          this.listeners.push(unsubChats);
 
           const eventsRef = ref(db, 'rooms/' + roomId + '/events');
-          onChildAdded(eventsRef, (snapshot) => {
+          const unsubEvents = onChildAdded(eventsRef, (snapshot) => {
             const eventData = snapshot.val();
             if(eventData && callbacks.onRemoteEvent) {
               callbacks.onRemoteEvent(eventData);
             }
           });
+          this.listeners.push(unsubEvents);
         },
 
         joinRoom: async function(roomId, joinerName, callbacks) {
+          this.clearListeners();
           const roomRef = ref(db, 'rooms/' + roomId);
           const snapshot = await get(roomRef);
           const data = snapshot.val();
@@ -2266,29 +2348,42 @@
             status: 'active'
           });
 
+          onDisconnect(roomRef).update({ status: 'abandoned' });
+
+          const unsubRoom = onValue(roomRef, (snapshot) => {
+            const data = snapshot.val();
+            if(!data || data.status === 'abandoned') {
+                if (callbacks.onOpponentDisconnect) callbacks.onOpponentDisconnect();
+            }
+          });
+          this.listeners.push(unsubRoom);
+
           const movesRef = ref(db, 'rooms/' + roomId + '/moves');
-          onChildAdded(movesRef, (snapshot) => {
+          const unsubMoves = onChildAdded(movesRef, (snapshot) => {
             const moveData = snapshot.val();
             if(moveData && moveData.by !== 2) {
               callbacks.onRemoteMove(moveData.move);
             }
           });
+          this.listeners.push(unsubMoves);
 
           const chatsRef = ref(db, 'rooms/' + roomId + '/chats');
-          onChildAdded(chatsRef, (snapshot) => {
+          const unsubChats = onChildAdded(chatsRef, (snapshot) => {
             const chatData = snapshot.val();
             if(chatData && chatData.by !== 2 && callbacks.onChatMessage) {
               callbacks.onChatMessage(chatData.text, chatData.by);
             }
           });
+          this.listeners.push(unsubChats);
 
           const eventsRef = ref(db, 'rooms/' + roomId + '/events');
-          onChildAdded(eventsRef, (snapshot) => {
+          const unsubEvents = onChildAdded(eventsRef, (snapshot) => {
             const eventData = snapshot.val();
             if(eventData && callbacks.onRemoteEvent) {
               callbacks.onRemoteEvent(eventData);
             }
           });
+          this.listeners.push(unsubEvents);
 
           callbacks.onJoined(data.host);
         },
