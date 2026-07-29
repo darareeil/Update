@@ -641,7 +641,7 @@
 
 <div class="board-bg" aria-hidden="true"></div>
 
-<main id="auth-page" class="auth-card" data-mode="signin">
+<main id="auth-page" class="auth-card" data-mode="signin" hidden>
   <div class="brand">
     <span class="brand-mark" aria-hidden="true"></span>
     <h1>Checkers</h1>
@@ -760,7 +760,7 @@
     
     <div class="field profile-field" style="width: 100%;">
       <input type="text" id="profile-username" placeholder=" ">
-      <label for="profile-username">Display Name</label>
+      <label for="profile-username">USERNAME</label>
       <button type="button" id="save-username-btn" class="link-btn">Save</button>
     </div>
     
@@ -1016,7 +1016,7 @@
   // Shows a toast of the given type in the top-right toast region.
   function showToast(message, type, duration){
     type = type || 'info';
-    duration = duration || 3200;
+    duration = duration || 1000;
 
     toastRegion.innerHTML = '';
 
@@ -1141,12 +1141,14 @@
   var backDashboardBtn = document.getElementById('back-dashboard-btn');
   var backProfileBtn = document.getElementById('back-profile-btn');
 
+  var initialAuthCheck = true;
+
   auth.onAuthStateChanged(function(user) {
     if (user) {
       // User is signed in
-      // Only transition to dashboard if coming from the auth page 
+      // Only transition to dashboard if coming from the auth page or initial load
       // (prevents UI resetting when updating profile or token refresh)
-      if (!authPage.hidden) {
+      if (!authPage.hidden || initialAuthCheck) {
         authPage.hidden = true;
         dashboardPage.hidden = false;
         lobbyPage.hidden = true;
@@ -1160,6 +1162,7 @@
       lobbyPage.hidden = true;
       profilePage.hidden = true;
     }
+    initialAuthCheck = false;
   });
 
   avatarBtn.addEventListener('click', function() {
@@ -1176,7 +1179,7 @@
     var newName = profileUsername.value.trim();
     var user = auth.currentUser;
     if (user && newName) {
-      saveUsernameBtn.textContent = 'Saving...';
+      saveUsernameBtn.textContent = '......';
       saveUsernameBtn.disabled = true;
       user.updateProfile({
         displayName: newName
