@@ -454,6 +454,18 @@
     filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
   }
 
+  #resultWord {
+    font-weight: 700;
+    font-size: clamp(1.4rem, 5vw, 2.4rem);
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-top: calc(-1 * clamp(6px, 1.5vh, 12px));
+  }
+  #resultWord:empty { display: none; }
+  #winnerName:empty { display: none; }
+  #resultWord.victory { color: #f0c98a; }
+  #resultWord.defeat { color: #ff4d4d; }
+
   #winnerName {
     font-weight: 700;
     font-size: clamp(1.6rem, 6vw, 2.8rem);
@@ -861,6 +873,7 @@
   <div id="confettiRight"></div>
   <div id="winnerCenter">
     <div id="trophyIcon">🏆</div>
+    <div id="resultWord"></div>
     <div id="winnerName"></div>
     <div id="winnerButtons">
       <button id="rematchBtn">Rematch</button>
@@ -1527,6 +1540,8 @@
     return score;
   }
 
+  let aiSearchDeadline = Infinity;
+
   function minimaxSearch(b, depth, alpha, beta, maximizing, aiColor, humanColor){
     const color = maximizing ? aiColor : humanColor;
     const moves = generateFullMoves(b, color);
@@ -1534,6 +1549,9 @@
       return maximizing ? (-1000 + depth) : (1000 - depth);
     }
     if (depth===0){
+      return evaluateBoard(b, aiColor);
+    }
+    if (Date.now() > aiSearchDeadline){
       return evaluateBoard(b, aiColor);
     }
     if (maximizing){
@@ -1574,13 +1592,16 @@
     moves = shuffleArray(moves.slice());
     const depth = 4 + Math.floor(Math.random()*3);
     const styleJitter = (Math.random() - 0.5) * 0.4;
+    const sliceMs = Math.max(8, 300 / moves.length);
     const scored = moves.map(seq => {
       const nb = applyFullMove(b, seq);
+      aiSearchDeadline = Date.now() + sliceMs;
       const positional = minimaxSearch(nb, depth-1, -Infinity, Infinity, false, color, humanColor);
       const noise = Math.random() * 0.2;
       const chainBonus = (seq.length - 1) * styleJitter;
       return {seq, val: positional + noise + chainBonus};
     });
+    aiSearchDeadline = Infinity;
     scored.sort((a,z) => z.val - a.val);
     const best = scored[0].val;
     const topCandidates = scored.filter(s => (best - s.val) < 0.35);
@@ -1795,6 +1816,8 @@
 
   const winnerScreen = document.getElementById('winnerScreen');
   const winnerName = document.getElementById('winnerName');
+  const trophyIcon = document.getElementById('trophyIcon');
+  const resultWord = document.getElementById('resultWord');
   const confettiLeft = document.getElementById('confettiLeft');
   const confettiRight = document.getElementById('confettiRight');
   const rematchBtn = document.getElementById('rematchBtn');
@@ -1823,9 +1846,22 @@
   function showWinnerScreen(winnerColor, label){
     stopTurnTimer();
     winnerName.textContent = label !== undefined ? label : (winnerColor==='black' ? username : 'Gray');
+    if (winnerColor === 'black' || winnerColor === 'gray'){
+      const youWon = winnerColor === (isOnline ? myColor : 'black');
+      trophyIcon.textContent = youWon ? '🏆' : '☠️';
+      resultWord.textContent = youWon ? 'VICTORY' : 'DEFEAT';
+      resultWord.className = youWon ? 'victory' : 'defeat';
+      winnerName.textContent = '';
+    } else {
+      trophyIcon.textContent = '🏆';
+      resultWord.textContent = '';
+      resultWord.className = '';
+    }
     winnerScreen.classList.add('open');
-    spawnConfettiBurst(confettiLeft, 'left');
-    spawnConfettiBurst(confettiRight, 'right');
+    if (resultWord.className !== 'defeat'){
+      spawnConfettiBurst(confettiLeft, 'left');
+      spawnConfettiBurst(confettiRight, 'right');
+    }
   }
 
   function resetGame(){
