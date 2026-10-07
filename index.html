@@ -2449,12 +2449,12 @@
       if (myRole === 'host' && gameOver && o && r[myUid] && r[o] && !rematchStarting) hostStartRematch();
     });
 
-    // 6) opponent left the room
+    // 6) opponent left
     listen(roomRef.child('left'), 'value', snap => {
       const l = snap.val() || {};
       const o = oppUid();
       if (o && l[o]){
-        toast('Opponent left the room');
+        toast('Opponent left');
         rematchBtn.disabled = true;
         rematchBtn.style.opacity = '0.5';
       }
