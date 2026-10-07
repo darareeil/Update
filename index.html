@@ -930,6 +930,7 @@
      draw             {from, status}             <- pending | declined
      rematch/{uid}    true
      left/{uid}       true
+     usernames/{key}  {uid, name, online, t}     <- unique username claims
      ping/{uid}       number                     <- RTT probe
 
    ROLES     host = black (moves first), guest = gray. Guest's board is
@@ -1001,6 +1002,13 @@
            "left":     { "$uid": { ".write": "auth != null && $uid === auth.uid" } },
            "draw":     { ".write": "auth != null && (root.child('rooms/' + $roomId + '/meta/host').val() === auth.uid || root.child('rooms/' + $roomId + '/meta/guest').val() === auth.uid)" },
            "rematch":  { ".write": "auth != null && (root.child('rooms/' + $roomId + '/meta/host').val() === auth.uid || root.child('rooms/' + $roomId + '/meta/guest').val() === auth.uid)" }
+         }
+       },
+       "usernames": {
+         "$name": {
+           ".read": "auth != null",
+           ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid || (data.child('online').val() === false && now - data.child('t').val() > 1800000))",
+           ".validate": "newData.hasChildren(['uid','name','online','t']) && newData.child('uid').val() === auth.uid"
          }
        }
      }
@@ -1783,6 +1791,10 @@
   const profileSaveBtn = document.getElementById('profileSaveBtn');
   const profileBackBtn = document.getElementById('profileBackBtn');
   let username = 'Player';
+  try {
+    const savedName = localStorage.getItem('dk_username');
+    if (savedName){ username = savedName.slice(0, 10); playButton.disabled = false; }
+  } catch(e){}
 
   function updateAvatarLetter(){
     const val = usernameInput.value.trim();
@@ -1805,9 +1817,19 @@
 
   profileSaveBtn.addEventListener('click', () => {
     const val = usernameInput.value.trim();
-    username = val.length ? val.slice(0, 10) : 'Player';
-    playButton.disabled = !val.length;
-    profileModal.classList.remove('open');
+    const applyName = () => {
+      username = val.length ? val.slice(0, 10) : 'Player';
+      playButton.disabled = !val.length;
+      profileModal.classList.remove('open');
+    };
+    if (!val.length){ releaseUsername(); applyName(); return; }
+    const name = val.slice(0, 10);
+    whenReady(() => {
+      claimUsername(name, (ok, failed) => {
+        if (ok){ saveUsername(name); applyName(); }
+        else if (!failed){ toast('Username already taken'); }
+      });
+    }, () => { saveUsername(name); applyName(); });
   });
 
   profileBackBtn.addEventListener('click', () => {
@@ -2089,6 +2111,80 @@
     try { localStorage.removeItem('dk_session'); } catch(e){}
   }
 
+  /* ---------- unique usernames (claimed in the database, saved locally) ---------- */
+  const USERNAME_HOLD_MS = 1800000;     // an offline player keeps their name for 30 min
+  let nameRef = null, nameConn = null;
+
+  function usernameKey(n){
+    return Array.from(String(n).trim().toLowerCase())
+      .map(ch => /[a-z0-9]/.test(ch) ? ch : '_' + ch.codePointAt(0).toString(16)).join('');
+  }
+  function saveUsername(n){
+    try { localStorage.setItem('dk_username', n); } catch(e){}
+  }
+  function armUsername(){
+    if (!nameRef) return;
+    const r = nameRef, TS = firebase.database.ServerValue.TIMESTAMP;
+    r.onDisconnect().update({online: false, t: TS}).then(() => r.update({online: true, t: TS})).catch(() => {});
+  }
+  function holdUsername(key){
+    if (nameRef && nameRef.key !== key){
+      nameRef.onDisconnect().cancel();
+      nameRef.remove().catch(() => {});
+    }
+    nameRef = db.ref('usernames/' + key);
+    armUsername();
+    if (!nameConn){
+      nameConn = db.ref('.info/connected');
+      nameConn.on('value', snap => { if (snap.val() === true) armUsername(); });
+    }
+  }
+  function releaseUsername(){
+    let n = null;
+    try { n = localStorage.getItem('dk_username'); localStorage.removeItem('dk_username'); } catch(e){}
+    if (nameRef){
+      nameRef.onDisconnect().cancel();
+      nameRef.remove().catch(() => {});
+      nameRef = null;
+    } else if (db && myUid && n){
+      db.ref('usernames/' + usernameKey(n)).remove().catch(() => {});
+    }
+  }
+  function claimUsername(name, cb){
+    const key = usernameKey(name);
+    const ref = db.ref('usernames/' + key);
+    primed(ref, (snap, done) => {
+      ref.transaction(cur => {
+        if (cur && cur.uid !== myUid && (cur.online || serverNow() - cur.t < USERNAME_HOLD_MS)) return;
+        return {uid: myUid, name: name, online: true, t: serverNow()};
+      }, (err, committed) => {
+        done();
+        if (err){ toast('Could not verify username'); cb(false, true); return; }
+        if (committed){
+          let prev = null;
+          try { prev = localStorage.getItem('dk_username'); } catch(e){}
+          if (prev && usernameKey(prev) !== key) db.ref('usernames/' + usernameKey(prev)).remove().catch(() => {});
+          holdUsername(key);
+        }
+        cb(committed);
+      }, false);
+    });
+  }
+  function verifySavedUsername(){
+    let n = null;
+    try { n = localStorage.getItem('dk_username'); } catch(e){}
+    if (!n) return;
+    claimUsername(n, (ok, failed) => {
+      if (ok || failed) return;
+      try { localStorage.removeItem('dk_username'); } catch(e){}
+      username = 'Player';
+      usernameInput.value = '';
+      updateAvatarLetter();
+      playButton.disabled = true;
+      toast('Username "' + n + '" is taken, choose another');
+    });
+  }
+
   /* ---------- init: Firebase app + anonymous auth + clock offset ---------- */
   function whenReady(fn, onFail){
     if (!db){ toast('Multiplayer unavailable (offline)'); if (onFail) onFail(); return; }
@@ -2103,6 +2199,7 @@
     db.ref('.info/serverTimeOffset').on('value', s => { serverOffset = s.val() || 0; });
     if (readyQueue.length) hideToast();
     readyQueue.splice(0).forEach(f => f());
+    verifySavedUsername();
     tryResume();
   }
 
