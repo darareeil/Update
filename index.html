@@ -443,23 +443,39 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: clamp(14px, 3vh, 24px);
+    gap: clamp(12px, 2.5vh, 20px);
     text-align: center;
     z-index: 2;
+    width: min(100%, 380px);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: clamp(24px, 5vh, 40px) clamp(20px, 6vw, 36px);
+    background: linear-gradient(160deg, #1c1c1c, #101010);
+    border-radius: 24px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.65), inset 0 0 0 1px #2b2b2b;
   }
 
   #trophyIcon {
-    font-size: clamp(3.5rem, 12vw, 6rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(88px, 22vw, 120px);
+    height: clamp(88px, 22vw, 120px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 70%);
+    box-shadow: inset 0 0 0 1px #2b2b2b;
+    font-size: clamp(2.6rem, 9vw, 4rem);
     line-height: 1;
     filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
   }
 
   #resultWord {
     font-weight: 700;
-    font-size: clamp(1.4rem, 5vw, 2.4rem);
-    letter-spacing: 4px;
+    font-size: clamp(1.6rem, 6vw, 2.6rem);
+    letter-spacing: 6px;
+    padding-left: 6px;
     line-height: 1;
-    margin-top: calc(-1 * clamp(6px, 1.5vh, 12px));
+    margin-top: 0;
   }
   #resultWord:empty { display: none; }
   #winnerName:empty { display: none; }
@@ -470,6 +486,8 @@
     font-weight: 700;
     font-size: clamp(1.6rem, 6vw, 2.8rem);
     letter-spacing: 0.5px;
+    line-height: 1.15;
+    word-break: break-word;
     background: linear-gradient(180deg, #ffffff 0%, #d8b184 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -480,8 +498,9 @@
   #winnerButtons {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: clamp(10px, 2vh, 20px);
+    gap: 12px;
+    width: 100%;
+    margin-top: clamp(6px, 1.5vh, 14px);
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -489,17 +508,20 @@
   #rematchBtn, #menuBtn {
     border: none;
     border-radius: 999px;
-    padding: 14px 40px;
+    width: 100%;
+    min-height: 50px;
+    padding: 14px 24px;
     font-size: clamp(0.95rem, 2.2vw, 1.15rem);
     font-weight: 700;
     letter-spacing: 0.5px;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
 
   #rematchBtn {
     color: #1a0f00;
     background: linear-gradient(145deg, #f0c98a, #d8b184);
+    box-shadow: 0 6px 18px rgba(216,177,132,0.25);
   }
 
   #rematchBtn:hover { transform: translateY(-2px) scale(1.03); background: linear-gradient(145deg, #f7d59f, #e0bc8f); }
@@ -508,10 +530,22 @@
   #menuBtn {
     color: #fff;
     background: #2b2b2b;
+    box-shadow: inset 0 0 0 1px #3a3a3a;
   }
 
   #menuBtn:hover { transform: translateY(-2px) scale(1.03); background: #3a3a3a; }
   #menuBtn:active { transform: translateY(1px) scale(0.97); }
+  #winnerCenter:has(#resultWord.victory) { box-shadow: 0 16px 48px rgba(0,0,0,0.65), 0 0 40px rgba(240,201,138,0.18), inset 0 0 0 1px rgba(240,201,138,0.45); }
+  #winnerCenter:has(#resultWord.defeat) { box-shadow: 0 16px 48px rgba(0,0,0,0.65), 0 0 40px rgba(255,77,77,0.15), inset 0 0 0 1px rgba(255,77,77,0.4); }
+  #rematchBtn:focus-visible, #menuBtn:focus-visible { outline: 2px solid #f0c98a; outline-offset: 3px; }
+  #rematchBtn:disabled, #menuBtn:disabled { cursor: not-allowed; }
+  #rematchBtn:disabled:hover, #menuBtn:disabled:hover { transform: none; }
+  @media (max-height: 520px) and (orientation: landscape) {
+    #winnerCenter { width: min(100%, 460px); padding: 16px 24px; gap: 8px; }
+    #trophyIcon { width: 56px; height: 56px; font-size: 2rem; }
+    #winnerButtons { flex-direction: column; flex-wrap: nowrap; gap: 10px; margin-top: 4px; }
+    #winnerButtons button { flex: none; min-height: 44px; padding: 10px 16px; }
+  }
 
   #confettiLeft, #confettiRight {
     position: absolute;
@@ -813,6 +847,7 @@
     font-size: 14px;
     letter-spacing: 0.5px;
     text-align: center;
+    white-space: nowrap;
     box-shadow: 0 4px 14px rgba(0,0,0,0.6), inset 0 0 0 1px #2b2b2b;
     z-index: 60;
     opacity: 0;
@@ -953,7 +988,8 @@
        An illegal move forfeits the game for the sender.
      - Missed updates, reconnects or rollbacks never replay: moveNo gaps
        trigger a full snapshot sync.
-     - Rematch: both press Rematch, host writes a fresh state (gameNo + 1);
+     - Rematch: one player requests, the opponent gets Accept / Decline;
+       on Accept the host writes a fresh state (gameNo + 1);
        both clients see the new gameNo and reset.
 
    LATENCY HANDLING
@@ -1350,7 +1386,7 @@
         const piece = board[r][c];
         if (piece){
           const pEl = document.createElement('div');
-          const isMovable = (!isOnline || (current===myColor && !animating)) && (mandatoryPieces.length>0 ? mandatoryKeys.has(r+','+c) : piece.color===current);
+          const isMovable = (!isOnline || (current===myColor && !animating)) && !(isAIGame && current==='gray') && (mandatoryPieces.length>0 ? mandatoryKeys.has(r+','+c) : piece.color===current);
           pEl.className = 'piece ' + piece.color + (piece.king ? ' king' : '') + (isMovable ? ' movable' : '');
           if (isMovable){
             const elapsed = ((Date.now() - animStart) / 1000) % ANIM_DURATION;
@@ -1816,6 +1852,7 @@
   });
 
   profileSaveBtn.addEventListener('click', () => {
+    profileModal.classList.remove('open');
     const val = usernameInput.value.trim();
     const applyName = () => {
       username = val.length ? val.slice(0, 10) : 'Player';
@@ -1939,6 +1976,8 @@
 
   function closeConfirmModal(){
     confirmModal.classList.remove('open');
+    confirmYesBtn.textContent = 'YES';
+    confirmNoBtn.textContent = 'NO';
     gameWrap.classList.remove('blurred');
   }
 
@@ -1947,10 +1986,16 @@
 
   confirmNoBtn.addEventListener('click', () => {
     if (confirmMode === 'drawIncoming') respondDraw(false);
+    if (confirmMode === 'rematchIncoming') respondRematch(false);
     closeConfirmModal();
   });
 
   confirmYesBtn.addEventListener('click', () => {
+    if (confirmMode === 'rematchIncoming'){
+      respondRematch(true);
+      closeConfirmModal();
+      return;
+    }
     if (confirmMode === 'drawIncoming'){
       respondDraw(true);
       closeConfirmModal();
@@ -2027,6 +2072,8 @@
   let rematchPending = false;
   let rematchStarting = false;
   let drawIncoming = false;
+  let rematchIncoming = false;
+  let lastRematch = {};
   let wasOffline = false;
   let attachTime = 0;
   const readyQueue = [];
@@ -2353,7 +2400,7 @@
     myColor = myRole === 'host' ? 'black' : 'gray';
     flipped = (myColor === 'gray');
     gameOver = false; localMoveNo = -1; gameNo = 0; animating = false;
-    pendingState = null; turnSteps = []; rematchPending = false; rematchStarting = false;
+    pendingState = null; turnSteps = []; rematchPending = false; rematchStarting = false; rematchIncoming = false; lastRematch = {};
     drawIncoming = false; wasOffline = false;
     attachTime = serverNow();
     chatMessages.innerHTML = '';
@@ -2447,14 +2494,26 @@
       const r = snap.val() || {};
       const o = oppUid();
       if (myRole === 'host' && gameOver && o && r[myUid] && r[o] && !rematchStarting) hostStartRematch();
+      lastRematch = r;
+      if (r.declined && r.declined === o){
+        rematchPending = false;
+        rematchBtn.textContent = 'Rematch';
+        toast('Rematch request declined.');
+        roomRef.child('rematch').remove();
+        return;
+      }
+      checkIncomingRematch();
     });
 
-    // 6) opponent left
+    // 6) opponent left the room
     listen(roomRef.child('left'), 'value', snap => {
       const l = snap.val() || {};
       const o = oppUid();
       if (o && l[o]){
-        toast('Opponent left');
+        toast('Opponent left the room');
+        lastRematch = {};
+        rematchIncoming = false;
+        if (confirmMode === 'rematchIncoming') closeConfirmModal();
         rematchBtn.disabled = true;
         rematchBtn.style.opacity = '0.5';
       }
@@ -2520,7 +2579,7 @@
   function startFresh(s){
     gameNo = s.gameNo;
     gameOver = false;
-    rematchPending = false; rematchStarting = false;
+    rematchPending = false; rematchStarting = false; rematchIncoming = false; lastRematch = {};
     winnerScreen.classList.remove('open');
     rematchBtn.textContent = 'Rematch';
     closeConfirmModal();
@@ -2572,6 +2631,7 @@
     else if (s.winner === 'black') label = (roomMeta && roomMeta.hostName) || 'Black';
     else label = (roomMeta && roomMeta.guestName) || 'Gray';
     showWinnerScreen(s.winner, label);
+    checkIncomingRematch();
   }
 
   /* ---------- sending my move (optimistic + transactional) ---------- */
@@ -2667,7 +2727,37 @@
     if (rematchPending || !roomRef) return;
     rematchPending = true;
     rematchBtn.textContent = 'Waiting...';
-    roomRef.child('rematch/' + myUid).set(true);
+    roomRef.child('rematch').update({[myUid]: true, declined: null});
+  }
+  function checkIncomingRematch(){
+    const r = lastRematch || {};
+    const o = oppUid();
+    const pending = !!(roomRef && o && r[o] && !r[myUid] && !r.declined);
+    if (pending && gameOver && winnerScreen.classList.contains('open') && !rematchIncoming){
+      rematchIncoming = true;
+      confirmMode = 'rematchIncoming';
+      confirmText.textContent = 'REMATCH REQUEST';
+      confirmText.style.display = 'block';
+      confirmYesBtn.textContent = 'Accept';
+      confirmNoBtn.textContent = 'Decline';
+      confirmButtons.style.display = 'flex';
+      confirmLoading.style.display = 'none';
+      confirmCancelBtn.style.display = 'none';
+      confirmModal.classList.add('open');
+      gameWrap.classList.add('blurred');
+    } else if (!pending && rematchIncoming){
+      rematchIncoming = false;
+      if (confirmMode === 'rematchIncoming') closeConfirmModal();
+    }
+  }
+  function respondRematch(accept){
+    rematchIncoming = false;
+    if (!roomRef) return;
+    if (accept){
+      roomRef.child('rematch/' + myUid).set(true);
+    } else {
+      roomRef.child('rematch').set({declined: myUid});
+    }
   }
   function hostStartRematch(){
     rematchStarting = true;
@@ -2686,7 +2776,7 @@
     isOnline = false; myColor = 'black'; flipped = false; animating = false;
     pendingState = null; turnSteps = [];
     roomRef = null; roomId = null; roomMeta = null; myRole = null; matchStarted = false;
-    rematchPending = false; rematchStarting = false; drawIncoming = false;
+    rematchPending = false; rematchStarting = false; drawIncoming = false; rematchIncoming = false; lastRematch = {};
     rematchBtn.textContent = 'Rematch';
     rematchBtn.disabled = false;
     rematchBtn.style.opacity = '';
