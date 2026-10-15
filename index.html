@@ -421,7 +421,7 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     height: 100dvh;
-    background: radial-gradient(circle at 50% 30%, #1a1a1a 0%, #000 70%);
+    background: #000;
     display: none;
     flex-direction: column;
     align-items: center;
@@ -450,9 +450,6 @@
     max-height: 100%;
     overflow-y: auto;
     padding: clamp(24px, 5vh, 40px) clamp(20px, 6vw, 36px);
-    background: linear-gradient(160deg, #1c1c1c, #101010);
-    border-radius: 24px;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.65), inset 0 0 0 1px #2b2b2b;
   }
 
   #trophyIcon {
@@ -535,8 +532,6 @@
 
   #menuBtn:hover { transform: translateY(-2px) scale(1.03); background: #3a3a3a; }
   #menuBtn:active { transform: translateY(1px) scale(0.97); }
-  #winnerCenter:has(#resultWord.victory) { box-shadow: 0 16px 48px rgba(0,0,0,0.65), 0 0 40px rgba(240,201,138,0.18), inset 0 0 0 1px rgba(240,201,138,0.45); }
-  #winnerCenter:has(#resultWord.defeat) { box-shadow: 0 16px 48px rgba(0,0,0,0.65), 0 0 40px rgba(255,77,77,0.15), inset 0 0 0 1px rgba(255,77,77,0.4); }
   #rematchBtn:focus-visible, #menuBtn:focus-visible { outline: 2px solid #f0c98a; outline-offset: 3px; }
   #rematchBtn:disabled, #menuBtn:disabled { cursor: not-allowed; }
   #rematchBtn:disabled:hover, #menuBtn:disabled:hover { transform: none; }
